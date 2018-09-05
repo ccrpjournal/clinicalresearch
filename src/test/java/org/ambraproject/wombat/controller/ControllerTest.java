@@ -38,7 +38,13 @@ import org.ambraproject.wombat.config.site.url.SiteRequestScheme;
 import org.ambraproject.wombat.config.theme.Theme;
 import org.ambraproject.wombat.service.ArticleTransformService;
 import org.ambraproject.wombat.service.HoneypotService;
-import org.ambraproject.wombat.service.remote.*;
+import org.ambraproject.wombat.service.remote.ArticleApi;
+import org.ambraproject.wombat.service.remote.ArticleApiImpl;
+import org.ambraproject.wombat.service.remote.RemoteService;
+import org.ambraproject.wombat.service.remote.JsonService;
+import org.ambraproject.wombat.service.remote.SolrSearchApi;
+import org.ambraproject.wombat.service.remote.SolrSearchApiImpl;
+import org.ambraproject.wombat.service.remote.UserApi;
 import org.ambraproject.wombat.util.JodaTimeLocalDateAdapter;
 import org.ambraproject.wombat.util.ThemeTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,10 +136,10 @@ public class ControllerTest extends AbstractTestNGSpringContextTests {
   }
 
   @Bean
-  protected CachedRemoteService<Reader> cachedRemoteReader() {
+  protected RemoteService<Reader> remoteReader() {
     @SuppressWarnings("unchecked")
-    final CachedRemoteService<Reader> cachedRemoteReader = mock(CachedRemoteService.class);
-    return cachedRemoteReader;
+    final RemoteService<Reader> remoteReader = mock(RemoteService.class);
+    return remoteReader;
   }
 
   @Bean
@@ -143,10 +149,10 @@ public class ControllerTest extends AbstractTestNGSpringContextTests {
   }
 
   @Bean
-  protected CachedRemoteService<InputStream> cachedRemoteInputStream() {
+  protected RemoteService<InputStream> cachedRemoteInputStream() {
     @SuppressWarnings("unchecked")
-    final CachedRemoteService<InputStream> cachedRemoteReader = mock(CachedRemoteService.class);
-    return cachedRemoteReader;
+    final RemoteService<InputStream> remoteReader = mock(RemoteService.class);
+    return remoteReader;
   }
 
   @Bean

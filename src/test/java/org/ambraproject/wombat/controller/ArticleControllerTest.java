@@ -33,12 +33,13 @@ import org.ambraproject.wombat.service.remote.ArticleApi;
 import org.ambraproject.wombat.service.remote.CorpusContentApi;
 import org.ambraproject.wombat.service.remote.orcid.OrcidApi;
 import org.ambraproject.wombat.service.remote.orcid.OrcidApiImpl;
+import org.mockito.MockitoAnnotations;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.ui.Model;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -115,7 +116,7 @@ public class ArticleControllerTest extends ControllerTest {
 
   @Bean
   protected ParseXmlService parseXmlService() {
-    final ParseXmlService parseXmlService = spy(ParseXmlServiceImpl.class);
+    final ParseXmlService parseXmlService = mock(ParseXmlServiceImpl.class);
     return parseXmlService;
   }
 
@@ -130,6 +131,11 @@ public class ArticleControllerTest extends ControllerTest {
   protected OrcidApi orcidApi() {
     final OrcidApi orcidApi = spy(OrcidApiImpl.class);
     return orcidApi;
+  }
+
+  @BeforeMethod
+  public void initMocks() {
+    MockitoAnnotations.initMocks(this);
   }
 
   /**
@@ -175,14 +181,13 @@ public class ArticleControllerTest extends ControllerTest {
         Reference.build().setTitle("Reference title").setPublisherName("Publisher Name")
             .setAuthors(ImmutableList.of()).setCollabAuthors(ImmutableList.of()).build();
     final ImmutableList<Reference> expectedReferences = ImmutableList.of(reference);
-    final ArticleController.XmlContent expectedXmlContent =
-        new ArticleController.XmlContent(expectedHtml, expectedReferences);
+    // final ParseXmlService mockParseXmlService = parseXmlService();
+    final ParseXmlService.XmlContent expectedXmlContent =
+        new ParseXmlService.XmlContent(expectedHtml, expectedReferences);
 
-    final CorpusContentApi mockCorpusContentApi =
-        applicationContext.getBean(CorpusContentApi.class);
-    when(mockCorpusContentApi.readManuscript(any(), any(), any(), any()))
-        .thenReturn(expectedXmlContent);
-
+    final ParseXmlService mockParseXmlService = applicationContext.getBean(ParseXmlService.class);
+    when(mockParseXmlService.getXmlContent(any(), any(), any())).thenReturn(expectedXmlContent);
+         
     final String expectedViewName = NOSPACE_JOINER.join(DESKTOP_PLOS_ONE, "/ftl/article/article");
     final String requestUri = NOSPACE_JOINER.join("/article?id=", EXPECTED_DOI);
     mockMvc.perform(get(new URI(requestUri))).andExpect(status().isOk())
@@ -194,7 +199,6 @@ public class ArticleControllerTest extends ControllerTest {
     verify(mockArticleService).getItemTable(expectedArticlePointer);
     verify(mockArticleApi, times(2)).requestObject(any(), eq(Map.class));
     verify(mockArticleMetadata).getArticlePointer();
-    verify(mockCorpusContentApi).readManuscript(any(), any(), any(), any());
   }
 
   @Test

@@ -35,7 +35,7 @@ import org.ambraproject.wombat.config.theme.ThemeGraph;
 import org.ambraproject.wombat.service.AssetService;
 import org.ambraproject.wombat.service.AssetServiceImpl;
 import org.ambraproject.wombat.service.remote.ArticleApi;
-import org.ambraproject.wombat.service.remote.CachedRemoteService;
+import org.ambraproject.wombat.service.remote.RemoteService;
 import org.ambraproject.wombat.service.remote.JsonService;
 import org.ambraproject.wombat.service.remote.SolrSearchApiImpl;
 import org.springframework.context.annotation.Bean;
@@ -100,7 +100,7 @@ public class TestSpringConfiguration {
   }
 
   @Bean
-  public CachedRemoteService<Reader> cachedRemoteReader() {
+  public RemoteService<Reader> remoteReader() {
 
     // TODO: stub out if necessary for any test.
     return null;
